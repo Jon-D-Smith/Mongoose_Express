@@ -28,6 +28,13 @@ app.get('/products', async (req, res) => {
     res.render('products/index', { products })
 })
 
+app.get('/products/:id', async (req, res) => {
+    const { id } = req.params;
+    const product = await Product.findById(id);
+    console.log(product)
+    res.render('products/show', { product })
+})
+
 
 //Listen for the server starting
 app.listen(port, () => {
