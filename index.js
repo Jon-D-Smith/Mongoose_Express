@@ -4,6 +4,9 @@ const app = express();
 const path = require('path');
 const port = 3000;
 
+const methodOverride = require('method-override')
+
+
 //Mongo Database Setup
 const mongoose = require('mongoose');
 const Product = require('./models/product');
@@ -20,6 +23,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 app.use(express.urlencoded({ extended: true }))
+app.use(methodOverride('_method'))
 
 //Routing
 app.get('/', (req, res) => {
@@ -44,15 +48,30 @@ app.post('/products', async (req, res) => {
 
 })
 
+
+
+
+//Routes to edit a product
+app.get('/products/:id/edit', async (req, res) => {
+    const { id } = req.params;
+    const product = await Product.findById(id)
+    res.render('products/edit', { product })
+})
+
+app.put('/products/:id', async (req, res) => {
+    const { id } = req.params;
+    const product = await Product.findByIdAndUpdate(id, req.body, { runValidators: true, new: true })
+    res.redirect(`/products/${product._id}`)
+
+})
+
+//Product detail page
 app.get('/products/:id', async (req, res) => {
     const { id } = req.params;
     const product = await Product.findById(id);
     console.log(product)
     res.render('products/show', { product })
 })
-
-
-
 
 //Listen for the server starting
 app.listen(port, () => {
