@@ -50,6 +50,13 @@ app.post('/farms', async (req, res) => {
     res.redirect('/farms')
 })
 
+
+app.get('/farms/:id', async (req, res) => {
+    const { id } = req.params;
+    const farm = await Farm.findById(id);
+    res.render('farms/show', { farm })
+})
+
 //Product Routes
 
 
