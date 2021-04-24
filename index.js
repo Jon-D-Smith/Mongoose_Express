@@ -3,6 +3,10 @@ const express = require('express');
 const app = express();
 const path = require('path');
 const port = 3000;
+const flash = require('connect-flash');
+const session = require('express-session');
+app.use(session({ secret: "MakeABetterSecret", resave: false, saveUninitialized: false }))
+app.use(flash())
 
 const methodOverride = require('method-override')
 
@@ -36,7 +40,7 @@ app.get('/', (req, res) => {
 
 app.get('/farms', async (req, res) => {
     const farms = await Farm.find({});
-    res.render('farms/index', { farms })
+    res.render('farms/index', { farms, messages: req.flash('success') })
 })
 
 
@@ -47,6 +51,7 @@ app.get('/farms/new', (req, res) => {
 app.post('/farms', async (req, res) => {
     const farm = new Farm(req.body);
     await farm.save()
+    req.flash('success', 'Successfully made a new farm!')
     res.redirect('/farms')
 })
 
